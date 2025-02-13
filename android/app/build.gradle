@@ -9,7 +9,6 @@ android {
     namespace = "com.example.petrank"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
-    compileSdkVersion 34
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -25,12 +24,10 @@ android {
         applicationId = "com.example.petrank"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-		minSdkVersion 23
-        targetSdkVersion 34
     }
 
     buildTypes {

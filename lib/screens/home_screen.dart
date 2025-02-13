@@ -4,106 +4,194 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('PetRank', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.teal,
-        elevation: 0,
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Hero Banner
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(16),
-            color: Colors.teal.shade100,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Discover the Cutest Pets!',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Vote, Rank, and Compare Pets Globally.',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 20),
-
-          // Top Ranked Pets Section
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              '🏆 Top Ranked Pets',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          SizedBox(height: 10),
-
-          // Horizontal Scrollable List
-          SizedBox(
-            height: 120,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 5, // Example data
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Column(
+      backgroundColor: Color(0xFFE0F7FA), // 청록색 계열의 밝은 배경
+      body: SafeArea(
+        child: Column(
+          children: [
+            // 상단 프로필 & 제목
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: AssetImage("assets/profile.png"),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: Image.asset(
-                          'assets/pet_placeholder.png', // Placeholder Image
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
+                      Text(
+                        "Pet Ranking",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
                       ),
-                      SizedBox(height: 5),
-                      Text('Pet ${index + 1}',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Row(
+                        children: [
+                          Icon(Icons.favorite, color: Colors.red, size: 20),
+                          SizedBox(width: 5),
+                          Text("10", style: TextStyle(fontSize: 16)),
+                          SizedBox(width: 10),
+                          Icon(Icons.pets, color: Colors.blue, size: 20),
+                        ],
+                      )
                     ],
                   ),
-                );
-              },
+                  Icon(Icons.notifications, color: Colors.black54, size: 28),
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 20),
+            SizedBox(height: 10),
 
-          // Upload & Analyze Button
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                // Navigate to Upload Screen
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+            // 둥근 버튼 (홈, 업로드, 프로필)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildRoundButton(Icons.home, "Home", true),
+                  _buildRoundButton(Icons.upload, "Upload", false),
+                  _buildRoundButton(Icons.person, "Profile", false),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+
+            // 탭 버튼 (Ranking, Upload 등)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildTabButton("Home", true),
+                  _buildTabButton("Profile", false),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+
+            // 애완동물 리스트 (GridView)
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: GridView.builder(
+                  itemCount: 4,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // 2개씩 정렬
+                    childAspectRatio: 0.8, // 카드 비율 조정
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemBuilder: (context, index) {
+                    return _buildPetCard(index);
+                  },
                 ),
               ),
-              child: Text('Upload & Analyze',
-                  style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 둥근 버튼 위젯
+  Widget _buildRoundButton(IconData icon, String label, bool isSelected) {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.cyan : Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 2,
+                blurRadius: 5,
+              ),
+            ],
+          ),
+          child: Icon(icon,
+              color: isSelected ? Colors.white : Colors.black54, size: 28),
+        ),
+        SizedBox(height: 5),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: isSelected ? Colors.cyan : Colors.black54,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // 탭 버튼 위젯
+  Widget _buildTabButton(String label, bool isSelected) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.cyan : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.cyan, width: 2),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: isSelected ? Colors.white : Colors.cyan,
+        ),
+      ),
+    );
+  }
+
+  // 애완동물 카드 위젯
+  Widget _buildPetCard(int index) {
+    List<String> petImages = [
+      "assets/pet1.png",
+      "assets/pet2.png",
+      "assets/pet3.png",
+      "assets/pet4.png"
+    ];
+    List<String> petNames = ["Ranking", "Ranking", "Upload", "Upload"];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 5,
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Ranking'),
-          BottomNavigationBarItem(icon: Icon(Icons.camera), label: 'Upload'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle), label: 'Profile'),
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            child: Image.asset(
+              petImages[index],
+              height: 100,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          SizedBox(height: 5),
+          Text(
+            petNames[index],
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            "Updated 2h ago",
+            style: TextStyle(fontSize: 12, color: Colors.black54),
+          ),
         ],
       ),
     );
