@@ -64,6 +64,7 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/my_pet.png
     - assets/pet1.png
     - assets/pet2.png
     - assets/pet3.png
