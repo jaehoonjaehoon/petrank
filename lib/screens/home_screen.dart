@@ -31,7 +31,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // 광고 슬라이드
+          // 🔹 광고 슬라이드
           Container(
             height: 120,
             margin: EdgeInsets.all(15),
@@ -65,7 +65,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
 
-          // 마이펫 프로필 카드
+          // 🔹 마이펫 프로필 카드
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Container(
@@ -111,11 +111,11 @@ class HomeScreen extends StatelessWidget {
           ),
           SizedBox(height: 20),
 
-          // 랭킹 보드
+          // 🔹 랭킹 보드
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.black26,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -149,15 +149,7 @@ class HomeScreen extends StatelessWidget {
                     child: ListView.builder(
                       itemCount: 4,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.grey[300],
-                            child: Icon(Icons.pets, color: Colors.brown),
-                          ),
-                          title: Text("애완동물 ${index + 1}"),
-                          subtitle: Text("점수: ${100 - (index * 10)}점"),
-                          trailing: Icon(Icons.star, color: Colors.orange),
-                        );
+                        return _buildPetRankCard(index);
                       },
                     ),
                   ),
@@ -167,20 +159,101 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      // 네비게이션 바
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.brown,
-        unselectedItemColor: Colors.grey,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "HOME"),
-          BottomNavigationBarItem(icon: Icon(Icons.leaderboard), label: "랭킹"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.photo_library), label: "이미지"),
-          BottomNavigationBarItem(icon: Icon(Icons.timeline), label: "성장기록"),
-          BottomNavigationBarItem(icon: Icon(Icons.pets), label: "MyPet"),
-        ],
+      // bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  // 🔹 애완동물 랭킹 카드 UI
+  Widget _buildPetRankCard(int index) {
+    List<String> petNames = ["애완동물 1", "애완동물 2", "애완동물 3", "애완동물 4"];
+    List<int> scores = [100, 90, 80, 70];
+    List<String> petImages = [
+      "assets/pet1.png",
+      "assets/pet2.png",
+      "assets/pet3.png",
+      "assets/pet4.png"
+    ];
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: GestureDetector(
+        onTap: () {
+          // 상세 페이지로 이동 가능
+          print("${petNames[index]} 클릭됨");
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 4,
+                spreadRadius: 1,
+              ),
+            ],
+          ),
+          padding: EdgeInsets.all(12),
+          child: Row(
+            children: [
+              // 🔹 프로필 이미지
+              CircleAvatar(
+                radius: 30,
+                backgroundImage: AssetImage(petImages[index]),
+              ),
+              SizedBox(width: 12),
+
+              // 🔹 애완동물 정보 (이름 + 점수)
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      petNames[index],
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Text("점수: ${scores[index]}점",
+                        style:
+                            TextStyle(fontSize: 12, color: Colors.grey[600])),
+                  ],
+                ),
+              ),
+
+              // 🔹 좋아요 & 댓글
+              Row(
+                children: [
+                  Icon(Icons.favorite_border, color: Colors.red, size: 20),
+                  SizedBox(width: 5),
+                  Text("15",
+                      style: TextStyle(fontSize: 14, color: Colors.black)),
+                  SizedBox(width: 10),
+                  Icon(Icons.chat_bubble_outline, color: Colors.grey, size: 18),
+                  SizedBox(width: 5),
+                  Text("8",
+                      style: TextStyle(fontSize: 14, color: Colors.black)),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
+
+  // 🔹 하단 네비게이션 바
+  // Widget _buildBottomNavigationBar() {
+  //   return BottomNavigationBar(
+  //     type: BottomNavigationBarType.fixed,
+  //     selectedItemColor: Colors.brown,
+  //     unselectedItemColor: Colors.grey,
+  //     items: [
+  //       BottomNavigationBarItem(icon: Icon(Icons.home), label: "HOME"),
+  //       BottomNavigationBarItem(icon: Icon(Icons.leaderboard), label: "랭킹"),
+  //       BottomNavigationBarItem(icon: Icon(Icons.photo_library), label: "이미지"),
+  //       BottomNavigationBarItem(icon: Icon(Icons.timeline), label: "성장기록"),
+  //       BottomNavigationBarItem(icon: Icon(Icons.pets), label: "MyPet"),
+  //     ],
+  //   );
+  // }
 }
