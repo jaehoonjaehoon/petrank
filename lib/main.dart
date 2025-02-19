@@ -47,7 +47,8 @@ class _PetRankAppState extends State<PetRankApp> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.brown.shade300, Colors.brown.shade500 // 하단 컬러 (연한 레드)
+                Colors.brown.shade300,
+                Colors.brown.shade500, // 하단 컬러 (연한 레드)
               ],
             ),
           ),
@@ -85,9 +86,10 @@ class _PetRankAppState extends State<PetRankApp> {
           ),
         ),
 
-        // ✅ 하단 네비게이션 바 (고급스러운 디자인 적용)
+        // ✅ 하단 네비게이션 바 (아이콘만 표시 & 세련된 스타일)
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.9), // 반투명 효과
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -112,15 +114,16 @@ class _PetRankAppState extends State<PetRankApp> {
               backgroundColor: Colors.white,
               currentIndex: _selectedIndex,
               onTap: _onItemTapped,
+              showSelectedLabels: false, // 🔹 선택된 아이콘 텍스트 숨김
+              showUnselectedLabels: false, // 🔹 미선택 아이콘 텍스트 숨김
               items: [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: "HOME"),
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.leaderboard), label: "랭킹"),
+                    icon: Icon(Icons.leaderboard), label: ""),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.photo_library), label: "이미지"),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.timeline), label: "성장기록"),
-                BottomNavigationBarItem(icon: Icon(Icons.pets), label: "MyPet"),
+                    icon: Icon(Icons.photo_library), label: ""),
+                BottomNavigationBarItem(icon: Icon(Icons.timeline), label: ""),
+                BottomNavigationBarItem(icon: Icon(Icons.pets), label: ""),
               ],
             ),
           ),

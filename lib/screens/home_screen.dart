@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:petrank/screens/post_create_screen.dart'; // ✨ 글 작성 스크린 추가
+import 'package:flutter/rendering.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool _isFabVisible = true; // ✨ FloatingActionButton 가시성 여부
+  ScrollController _scrollController = ScrollController();
+
   final List<Map<String, dynamic>> posts = [
     {
       "user": "강아지 주인",
@@ -29,57 +39,53 @@ class HomeScreen extends StatelessWidget {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  // ✨ 스크롤 감지해서 FloatingActionButton 숨김/표시
+  void _scrollListener() {
+    if (_scrollController.position.userScrollDirection ==
+        ScrollDirection.reverse) {
+      if (_isFabVisible) {
+        setState(() {
+          _isFabVisible = false;
+        });
+      }
+    } else if (_scrollController.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      if (!_isFabVisible) {
+        setState(() {
+          _isFabVisible = true;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFFDF6EC), // 감성적인 크림색 배경
-
       body: Column(
         children: [
-          // 🔹 상단 바 (고급진 스타일 적용)
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.brown.shade300, Colors.brown.shade500],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "🐾 PetRank",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Row(
-                  children: [
-                    Icon(Icons.search, color: Colors.white),
-                    SizedBox(width: 20),
-                    Icon(Icons.notifications, color: Colors.white),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // 🔹 카테고리 필터
+          // 🔹 카테고리 필터 (좌측: 전체, 우측: 강아지, 고양이, 기타)
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildCategoryButton("전체", true),
+                _buildCategoryButton("전체", true), // 🔹 좌측 정렬된 "전체" 버튼
+                Spacer(),
                 _buildCategoryButton("강아지", false),
+                SizedBox(width: 8),
                 _buildCategoryButton("고양이", false),
+                SizedBox(width: 8),
                 _buildCategoryButton("기타", false),
               ],
             ),
@@ -88,6 +94,7 @@ class HomeScreen extends StatelessWidget {
           // 🔹 커뮤니티 피드 (게시글 리스트)
           Expanded(
             child: ListView.builder(
+              controller: _scrollController, // ✨ 스크롤 감지 추가
               itemCount: posts.length,
               itemBuilder: (context, index) {
                 return _buildPostCard(posts[index]);
@@ -97,14 +104,23 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
 
-      // 🔹 고급진 글 작성 버튼
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.brown.shade500,
-        onPressed: () {
-          print("새 게시글 작성하기");
-        },
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Icon(Icons.edit, color: Colors.white),
+      // 🔹 글 작성 버튼 (스크롤 시 숨김)
+      floatingActionButton: AnimatedOpacity(
+        opacity: _isFabVisible ? 1.0 : 0.0,
+        duration: Duration(milliseconds: 300),
+        child: FloatingActionButton(
+          backgroundColor: Colors.brown.shade500,
+          onPressed: () {
+            // ✨ 글 작성 화면으로 이동
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PostCreateScreen()),
+            );
+          },
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Icon(Icons.edit, color: Colors.white),
+        ),
       ),
     );
   }
@@ -134,7 +150,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // 🔹 게시글 UI (고급스럽게 변경)
+  // 🔹 게시글 UI
   Widget _buildPostCard(Map<String, dynamic> post) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
