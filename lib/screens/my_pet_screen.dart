@@ -5,16 +5,7 @@ class MyPetScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF5ECE1), // 기존 앱 색상과 조정
-      appBar: AppBar(
-        backgroundColor: Color(0xFFF5ECE1),
-        elevation: 0,
-        title:
-            Text("MyPet", style: TextStyle(color: Colors.brown, fontSize: 20)),
-        actions: [
-          Icon(Icons.notifications, color: Colors.white),
-          SizedBox(width: 20),
-        ],
-      ),
+
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

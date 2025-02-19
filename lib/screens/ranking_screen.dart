@@ -36,16 +36,6 @@ class RankingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF5ECE1), // 부드러운 베이지톤 배경
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Text(
-          "Popular Pets",
-          style: TextStyle(
-              fontSize: 22, fontWeight: FontWeight.bold, color: Colors.brown),
-        ),
-        centerTitle: true,
-      ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15),
         child: ListView.builder(

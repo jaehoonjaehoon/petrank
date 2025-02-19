@@ -35,15 +35,6 @@ class _GrowthScreenState extends State<GrowthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF5ECE1),
-      appBar: AppBar(
-        title: Text(
-          "성장 기록",
-          style: TextStyle(color: Colors.brown),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.brown),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(

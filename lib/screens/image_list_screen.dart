@@ -17,15 +17,7 @@ class ImageListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF5ECE1), // 배경색 적용
-      appBar: AppBar(
-        title: Text(
-          "이미지 리스트",
-          style: TextStyle(color: Colors.brown),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.brown),
-      ),
+
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: GridView.builder(
