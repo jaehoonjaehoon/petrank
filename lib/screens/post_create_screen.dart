@@ -15,9 +15,9 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
 
   final List<String> pets = ["루루 (골든리트리버)", "초코 (푸들)", "구름이 (스코티시 폴드)"];
 
-  Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+  // 📸 이미지 선택 (갤러리 or 카메라)
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
         _selectedImage = File(pickedFile.path);
@@ -25,10 +25,57 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
     }
   }
 
+  // 📸 이미지 선택 모달창 (갤러리 or 카메라)
+  void _showImagePicker() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(16),
+          height: 150,
+          child: Column(
+            children: [
+              Text("사진 업로드",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // 📸 카메라 버튼
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.brown.shade500),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _pickImage(ImageSource.camera);
+                    },
+                    icon: Icon(Icons.camera_alt, color: Colors.white),
+                    label: Text("카메라", style: TextStyle(color: Colors.white)),
+                  ),
+                  // 🖼 갤러리 버튼
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.brown.shade700),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _pickImage(ImageSource.gallery);
+                    },
+                    icon: Icon(Icons.image, color: Colors.white),
+                    label: Text("갤러리", style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFF3E0), // 따뜻한 배경색 (연한 오렌지톤)
+      backgroundColor: Color(0xFFFFF3E0),
       appBar: AppBar(
         backgroundColor: Colors.brown.shade500,
         title: Text("새 게시글 작성", style: TextStyle(color: Colors.white)),
@@ -70,25 +117,25 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
             ),
             SizedBox(height: 15),
 
-            // 🐾 제목 입력 필드 (말풍선 스타일)
+            // 🐾 제목 입력 필드
             Text("제목", style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 5),
             _buildCuteTextField(_titleController, "제목을 입력하세요", 1),
 
             SizedBox(height: 15),
 
-            // 🐾 내용 입력 필드 (여러 줄, 말풍선 스타일)
+            // 🐾 내용 입력 필드
             Text("내용", style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 5),
             _buildCuteTextField(_contentController, "내용을 입력하세요", 5),
 
             SizedBox(height: 15),
 
-            // 🐾 이미지 업로드 (말풍선 느낌)
+            // 🐾 이미지 업로드 버튼 & 미리보기
             Text("사진 업로드", style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 5),
             GestureDetector(
-              onTap: _pickImage,
+              onTap: _showImagePicker, // 📸 이미지 선택 모달 띄우기
               child: Container(
                 height: 150,
                 width: double.infinity,
@@ -115,7 +162,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
 
             Spacer(),
 
-            // 🐾 게시 버튼 (하단 고정)
+            // 🐾 게시 버튼 (글 작성 완료 후 홈 스크린으로 데이터 전달)
             Container(
               width: double.infinity,
               child: ElevatedButton(
@@ -126,8 +173,25 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                   padding: EdgeInsets.symmetric(vertical: 15),
                 ),
                 onPressed: () {
-                  // TODO: 작성한 글 저장 기능 추가 (예: Firebase 연동)
-                  Navigator.pop(context); // 작성 완료 후 홈으로 돌아감
+                  if (_titleController.text.isEmpty ||
+                      _contentController.text.isEmpty ||
+                      selectedPet == null ||
+                      _selectedImage == null) {
+                    return;
+                  }
+
+                  // 새 게시글 데이터
+                  Map<String, dynamic> newPost = {
+                    "user": "나", // 현재 로그인한 유저 (임시)
+                    "profilePic": "assets/profile1.png",
+                    "petImage": _selectedImage!.path, // 업로드한 이미지
+                    "content": _contentController.text,
+                    "likes": 0,
+                    "comments": 0,
+                  };
+
+                  // 홈 화면으로 새 글 데이터 전달
+                  Navigator.pop(context, newPost);
                 },
                 child: Text("게시",
                     style: TextStyle(color: Colors.white, fontSize: 18)),
@@ -139,14 +203,14 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
     );
   }
 
-  // 🐾 귀여운 말풍선 스타일 텍스트 입력 필드
+  // 🐾 말풍선 스타일 텍스트 입력 필드
   Widget _buildCuteTextField(
       TextEditingController controller, String hint, int maxLines) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20), // 둥근 말풍선 디자인
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.brown.shade300, width: 2),
         boxShadow: [
           BoxShadow(

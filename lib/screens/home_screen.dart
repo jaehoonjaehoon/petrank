@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:petrank/screens/post_create_screen.dart'; // ✨ 글 작성 스크린 추가
+import 'package:petrank/screens/post_create_screen.dart'; // 글 작성 스크린
 import 'package:flutter/rendering.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -8,10 +8,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _isFabVisible = true; // ✨ FloatingActionButton 가시성 여부
+  bool _isFabVisible = true; // FloatingActionButton 가시성 여부
   ScrollController _scrollController = ScrollController();
 
-  final List<Map<String, dynamic>> posts = [
+  List<Map<String, dynamic>> posts = [
     {
       "user": "강아지 주인",
       "profilePic": "assets/profile1.png",
@@ -63,6 +63,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // 📝 새 게시글 추가 (PostCreateScreen에서 받아오기)
+  void _addNewPost(Map<String, dynamic> newPost) {
+    setState(() {
+      posts.insert(0, newPost); // 새 글을 가장 위에 추가
+    });
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -110,12 +117,17 @@ class _HomeScreenState extends State<HomeScreen> {
         duration: Duration(milliseconds: 300),
         child: FloatingActionButton(
           backgroundColor: Colors.brown.shade500,
-          onPressed: () {
-            // ✨ 글 작성 화면으로 이동
-            Navigator.push(
+          onPressed: () async {
+            // ✨ 글 작성 화면으로 이동 후 결과 받아오기
+            final newPost = await Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => PostCreateScreen()),
             );
+
+            // 새 게시글이 있을 경우 추가
+            if (newPost != null) {
+              _addNewPost(newPost);
+            }
           },
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -186,11 +198,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 10),
 
-            // 🔹 게시글 이미지
+            // 🔹 게시글 이미지 (파일인지, 네트워크인지 자동 판별)
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child: Image.asset(post["petImage"],
-                  height: 180, width: double.infinity, fit: BoxFit.cover),
+              child: _buildPostImage(post["petImage"]),
             ),
             SizedBox(height: 10),
 
@@ -219,6 +230,16 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  // 🔹 이미지 파일 처리
+  Widget _buildPostImage(String imagePath) {
+    return Image.asset(
+      imagePath,
+      height: 180,
+      width: double.infinity,
+      fit: BoxFit.cover,
     );
   }
 
